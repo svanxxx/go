@@ -7,7 +7,9 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
+	"github.com/golang-jwt/jwt/v4"
 	_ "github.com/lib/pq"
 )
 
@@ -27,7 +29,7 @@ type User struct {
 type IUserManager interface {
 	FindUser(name string) *User
 	RegisterUser(name string, password string, email string) (*User, error)
-	Login(name string, password string) (*User, error)
+	Login(name string, password string) (string, error)
 	Connect()
 	Disconnect()
 	Connected() bool
@@ -73,15 +75,26 @@ func (man *UserManager) FindUser(name string) (*User, error) {
 	return &user, nil
 }
 
-func (man *UserManager) Login(name string, password string) (*User, error) {
+var SecretKey = []byte("874967EC3EA3490F8F2EF6478B72A756")
+
+func (man *UserManager) Login(name string, password string) (string, error) {
 	user, _ := man.FindUser(name)
 	if user == nil {
-		return nil, errors.New("User not found")
+		return "", errors.New("User not found")
 	}
 	if GetMD5Hash(password) != user.pass {
-		return nil, errors.New("Invalid password")
+		return "", errors.New("Invalid password")
 	}
-	return user, nil
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["exp"] = time.Now().Add(24 * time.Hour)
+	claims["authorized"] = true
+	claims["user"] = user.name
+	tokenString, err := token.SignedString(SecretKey)
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
 }
 
 func (man *UserManager) RegisterUser(name string, password string, email string) (*User, error) {

@@ -15,7 +15,7 @@ type loginRequest struct {
 }
 
 type loginResponse struct {
-	ID  uint64 `json:"id"`
+	JWT string `json:"jwt"`
 	Err string `json:"err,omitempty"` // errors don't define JSON marshaling
 }
 
@@ -31,11 +31,11 @@ func makeLoginEndpoint() endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(loginRequest)
 		var man UserManager
-		user, err := man.Login(req.Name, req.Password)
+		jwt, err := man.Login(req.Name, req.Password)
 		if err != nil {
-			return registerResponse{0, err.Error()}, nil
+			return loginResponse{"", err.Error()}, nil
 		}
-		return registerResponse{user.id, ""}, nil
+		return loginResponse{jwt, ""}, nil
 	}
 }
 
