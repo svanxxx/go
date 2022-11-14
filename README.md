@@ -8,7 +8,8 @@
   
 ##Database
  - github.com/lib/pq
- 
+ - added "host  all  all 0.0.0.0/0 md5" to "C:\Program Files\PostgreSQL\15\data\pg_hba.conf" for testing purposes as appplication connects to external IP address server
+
  ##Testing
  - "go test" (in the current directory)
 
