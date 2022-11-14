@@ -6,3 +6,6 @@
   - go get github.com/go-kit/kit/endpoint
   - go get github.com/go-kit/kit/transport/http
   
+##Database
+ - github.com/lib/pq
+ 
