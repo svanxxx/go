@@ -32,6 +32,7 @@ func makeRegisterEndpoint() endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(registerRequest)
 		var man UserManager
+		defer man.Disconnect()
 		user, err := man.RegisterUser(req.Name, req.Password, req.Email)
 		if err != nil {
 			return registerResponse{0, err.Error()}, nil

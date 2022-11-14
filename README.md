@@ -9,3 +9,5 @@
 ##Database
  - github.com/lib/pq
  
+ ##Testing
+  go test (in the current directory)

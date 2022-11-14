@@ -31,6 +31,7 @@ func makeLoginEndpoint() endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(loginRequest)
 		var man UserManager
+		defer man.Disconnect()
 		jwt, err := man.Login(req.Name, req.Password)
 		if err != nil {
 			return loginResponse{"", err.Error()}, nil

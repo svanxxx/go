@@ -117,3 +117,19 @@ func (man *UserManager) RegisterUser(name string, password string, email string)
 	user, _ = man.FindUser(name)
 	return user, nil
 }
+
+func (man *UserManager) UnRegisterUser(name string) error {
+	if !man.Connected() {
+		if !man.Connect() {
+			return errors.New("Database not connected")
+		}
+	}
+	user, _ := man.FindUser(name)
+	if user != nil {
+		_, err := man.db.Exec("delete from users where name = $1", name)
+		if err != nil {
+			panic(err)
+		}
+	}
+	return nil
+}
