@@ -10,6 +10,7 @@ import (
 // Transports expose the service to the network. In this first example we utilize JSON over HTTP.
 func main() {
 	routeRegister()
+	routeLogin()
 	log.Fatal(http.ListenAndServe(":12345", nil))
 }
 

@@ -11,6 +11,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
+func GetMD5Hash(text string) string {
+	hash := md5.Sum([]byte(text))
+	return hex.EncodeToString(hash[:])
+}
+
 type User struct {
 	id    uint64
 	name  string
@@ -22,6 +27,7 @@ type User struct {
 type IUserManager interface {
 	FindUser(name string) *User
 	RegisterUser(name string, password string, email string) (*User, error)
+	Login(name string, password string) (*User, error)
 	Connect()
 	Disconnect()
 	Connected() bool
@@ -56,7 +62,7 @@ func (man *UserManager) Connect() bool {
 func (man *UserManager) FindUser(name string) (*User, error) {
 	if !man.Connected() {
 		if !man.Connect() {
-			return nil, errors.New("database not connected")
+			return nil, errors.New("Database not connected")
 		}
 	}
 	var user User
@@ -67,19 +73,25 @@ func (man *UserManager) FindUser(name string) (*User, error) {
 	return &user, nil
 }
 
-func GetMD5Hash(text string) string {
-	hash := md5.Sum([]byte(text))
-	return hex.EncodeToString(hash[:])
+func (man *UserManager) Login(name string, password string) (*User, error) {
+	user, _ := man.FindUser(name)
+	if user == nil {
+		return nil, errors.New("User not found")
+	}
+	if GetMD5Hash(password) != user.pass {
+		return nil, errors.New("Invalid password")
+	}
+	return user, nil
 }
 
 func (man *UserManager) RegisterUser(name string, password string, email string) (*User, error) {
 	if !man.Connected() {
 		if !man.Connect() {
-			return nil, errors.New("database not connected")
+			return nil, errors.New("Database not connected")
 		}
 	}
 	if len(name) < 1 || len(password) < 1 || len(email) < 1 {
-		return nil, errors.New("name, password and email cannot be empty")
+		return nil, errors.New("Name, password and email cannot be empty")
 	}
 	user, _ := man.FindUser(name)
 	if user != nil {
