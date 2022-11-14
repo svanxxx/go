@@ -43,7 +43,7 @@ func (man *UserManager) Connected() bool {
 
 func (man *UserManager) Connect() bool {
 	man.Disconnect()
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable binary_parameters=yes", "127.0.0.1", 5432, "go", "go", "users")
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable binary_parameters=yes", "127.0.0.1", 5433, "go", "go", "users")
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		log.Fatal(err)
@@ -85,7 +85,7 @@ func (man *UserManager) RegisterUser(name string, password string, email string)
 	if user != nil {
 		return nil, errors.New("user already exists")
 	}
-	_, err := man.db.Exec("insert into users (name, pass, mail) values($1,$2,$3)", name, GetMD5Hash(password), email)
+	_, err := man.db.Exec("insert into users (name, pass, email) values($1,$2,$3)", name, GetMD5Hash(password), email)
 	if err != nil {
 		panic(err)
 	}
