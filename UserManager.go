@@ -51,7 +51,7 @@ func (man *UserManager) Connected() bool {
 
 func (man *UserManager) Connect() bool {
 	man.Disconnect()
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable binary_parameters=yes", "127.0.0.1", 5433, "go", "go", "users")
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable binary_parameters=yes", "192.168.0.12", 5433, "go", "go", "users")
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		log.Fatal(err)

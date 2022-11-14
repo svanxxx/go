@@ -10,4 +10,8 @@
  - github.com/lib/pq
  
  ##Testing
-  go test (in the current directory)
+ - "go test" (in the current directory)
+
+##Docker (all commands in the root dir)
+ - "docker build . -t users"
+ - "docker run -p 12345:12345 users"
